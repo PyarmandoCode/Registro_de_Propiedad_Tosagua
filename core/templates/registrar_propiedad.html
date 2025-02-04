@@ -1,0 +1,863 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Estilo de los inputs de fecha */
+    input[type="date"] {
+        padding: 10px;
+        border: 2px solid #007bff; /* Azul Bootstrap */
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    /* Estilo para los campos grandes */
+    .form-control-lg {
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Efecto al enfocar los campos grandes */
+    .form-control-lg:focus {
+        transform: scale(1.05);
+        border-color: #0056b3; /* Azul más oscuro */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo de las etiquetas de los campos */
+    .form-label {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #0056b3; /* Azul para las etiquetas */
+    }
+
+    /* Estilo del título */
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 30px;
+    }
+
+
+    /* Estilo del formulario */
+    .form-control {
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    /* Estilo del botón */
+    .btn2 {
+        padding: 12px 20px;
+        font-size: 1.2rem;
+        background-color: #007bff; /* Azul Bootstrap */
+        border: none;
+        border-radius: 30px;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Efecto al pasar el mouse sobre el botón */
+    .btn2:hover {
+        background-color: #0056b3; /* Azul más oscuro */
+    }
+
+    .card {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        background-color: #f8f9fa;
+    }
+
+    /* Estilo de la tarjeta */
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+
+    /* Estilo para el input readonly */
+    input[readonly] {
+        background-color: #e0f7fa; /* Color suave de fondo */
+        border: 2px solid #00796b; /* Azul oscuro para readonly */
+        font-weight: bold;
+    }
+
+    /* Contenedor centrado */
+    .select-container {
+        max-width: 400px; /* Define el ancho máximo */
+        margin: 0 auto; /* Centra el select */
+        position: relative;
+    }
+
+    /* Select con estilo moderno */
+    .stylish-select {
+        background: #f8f9fa; /* Color de fondo suave */
+        border: 2px solid #007bff; /* Borde azul */
+        border-radius: 12px; /* Bordes redondeados */
+        padding: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    /* Efecto hover */
+    .stylish-select:hover {
+        background: #e2e6ea; /* Cambio de color al pasar el mouse */
+        border-color: #0056b3;
+    }
+
+    /* Estilo para la opción seleccionada */
+    .stylish-select:focus {
+        outline: none;
+        border-color: #28a745; /* Verde llamativo al seleccionar */
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #007bff;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+    }
+
+    .btn-success {
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+
+    table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+
+    #pdfIconContainer {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    /* Botón de PDF con icono atractivo */
+    #pdfIconContainer a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        background-color: #007bff; /* Azul de fondo */
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    #pdfIconContainer a:hover {
+        background-color: #0056b3; /* Azul más oscuro al hacer hover */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    #pdfIconContainer a svg {
+        margin-right: 8px; /* Espaciado entre ícono y texto */
+    }
+    
+    /* Efecto al pasar el mouse sobre el botón */
+    #pdfIconContainer a:active {
+        transform: scale(0.98); /* Efecto de presión al hacer clic */
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Registrar Propiedad</h1>
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <form id="propiedadForm" method="post" action="{% url 'registrar_propiedad' %}">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <!-- Columna 1 -->
+                    <div class="col-md-6">
+                        <label for="nombre" class="form-label">Solicitante</label>
+                        <input type="text" class="form-control form-control-lg" id="nombre" name="nombre" 
+                               value="{{ nombre }} {{ apellido }}" readonly>
+
+                               <input type="hidden" name="nombres" id="nombres"  value="{{ nombre }}"> <!-- Este campo oculto pasa el nombre -->
+                               <input type="hidden" name="apellidos" id="apellidos"  value="{{ apellido }}"> <!-- Este campo oculto pasa el apellido -->       
+                        
+                        <div class="mb-3">
+                            <label for="numeroregistro" class="form-label">Número de Inscripción</label>
+                            <input type="text" class="form-control form-control-lg" id="numeroregistro" name="numeroregistro" 
+                                   placeholder="Número de Registro" value="{{ numero_inscripcion }}" 
+                                   {% if registro %} readonly {% endif %} required>
+                        </div>
+            
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título de la Propiedad</label>
+                            <input type="text" class="form-control form-control-lg" id="titulo" name="titulo" 
+                                   placeholder="Ingrese el título" value="{{ titulo }}" {% if registro %} readonly {% endif %} required>
+                        </div>
+            
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control form-control-lg" id="descripcion" name="descripcion" rows="3"
+                            placeholder="Ingrese la descripción" {% if registro %} readonly {% endif %}>{{ observaciones|default:"" }}</textarea>
+                  
+                        </div>
+                    </div>
+            
+                    <!-- Columna 2 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="oficina" class="form-label">Oficina Guarda Original</label>
+                            <input type="text" class="form-control form-control-lg" id="oficina" name="oficina" 
+                                   placeholder="Ingrese Oficina" value="{{ oficina }}" {% if registro %} readonly {% endif %} required>
+                        </div>
+            
+                        <div class="mb-3">
+                            <label for="canton" class="form-label">Nombre del Cantón</label>
+                            <input type="text" class="form-control form-control-lg" id="canton" name="canton" 
+                                   placeholder="Nombre del Cantón" value="{{ canton }}" {% if registro %} readonly {% endif %} required>
+                        </div>
+            
+                        <div class="mb-3">
+                            <label for="fecharesolucion" class="form-label">Fecha Resolución</label>
+                            <input type="date" class="form-control form-control-lg" id="fecharesolucion" name="fecharesolucion" 
+                            value="{{ fecha_resolucion|date:'Y-m-d' }}" {% if registro %} readonly {% endif %} required>
+                     
+                        </div>
+            
+                        <div class="mb-3">
+                            <label for="fechainscripcion" class="form-label">Fecha Inscripción</label>
+                            <input type="date" class="form-control form-control-lg" id="fechainscripcion" name="fechainscripcion" 
+                               value="{{ fecha_inscripcion|date:'Y-m-d' }}" {% if registro %} readonly {% endif %} required>
+
+                        </div>
+                    </div>
+                </div>
+                {% if not registro %}
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn2 btn-lg">Registrar Propiedad</button>
+                </div>
+                {% endif%}
+            
+                <br/>
+                <div class="mb-3 text-center">
+                    <label for="propiedades" class="form-label fw-bold text-primary">🏡 Propiedades del Solicitante</label>
+                    <div class="select-container">
+                        <select id="propiedades" class="form-select form-select-lg stylish-select" >
+                            {% if propiedades %}
+                                <option value="">🔍 Seleccione una propiedad</option>
+                                {% for propiedad in propiedades %}
+                                    <option value="{{ propiedad.id }}" data-bien="{{ propiedad.bien_inmueble }}" 
+                                            data-ubicacion="{{ propiedad.ubicacion }}" data-area="{{ propiedad.area }}"
+                                            >
+                                        🏠 {{ propiedad.bien_inmueble }}
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="">⚠️ Este solicitante no tiene propiedades</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+              
+
+                <div id="pdfIconContainer"></div>
+
+                                <!-- Selector de Estado -->
+                    <div class="mb-3 text-center">
+                        <label for="valestado" class="form-label fw-bold text-primary">📋 Estado del Registro</label>
+                        <div class="select-container">
+                            <select id="valestado" class="form-select form-select-lg stylish-select" name="valestado">
+                                <option value="">🔍 Seleccione el estado</option>
+                                <option value="atendiendo">Atendiendo</option>
+                                <option value="cancelado">Cancelado</option>
+                                <option value="atendido">Atendido</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botón para actualizar el estado -->
+                    <div class="text-center mt-4">
+                        <button type="button" class="btn2 btn-lg" onclick="actualizarEstado()">Actualizar Estado</button>
+                    </div>
+            </form>
+               
+                  <!-- Formulario para agregar movimientos -->
+                    <div class="container mt-5">
+                        <h2 class="text-center text-primary">📌 Movimientos del Registro</h2>
+                        <div class="card shadow-lg p-4 mt-3">
+                            <h4 class="text-center text-dark">➕ Agregar Nuevo Movimiento</h4>
+                            <form id="movimientoForm" method="post" action="{% url 'registrar_movimiento' %}">
+                                {% csrf_token %}
+                                <div class="row g-3">
+                                    <!-- Campo oculto para la propiedad seleccionada -->
+                                    <input type="hidden" id="propiedad_id" name="propiedad_id" required>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">📖 Libro</label>
+                                        <input type="text" class="form-control" id="libro" name="libro" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">📜 Acto</label>
+                                        <input type="text" class="form-control" id="acto" name="acto" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">🔢 N° Inscripción</label>
+                                        <input type="number" class="form-control" id="numero_Inscripcion" name="numero_Inscripcion" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">📅 Fecha Inscripción</label>
+                                        <input type="date" class="form-control" id="fecha_inscripcion" name="fecha_inscripcion" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">📄 Folio Inicial</label>
+                                        <input type="text" class="form-control" id="folio_inicial" name="folio_inicial" required>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-success w-100">✔ Guardar Movimiento</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                
+                    <!-- Tabla de Movimientos -->
+                    <div class="card shadow-lg p-4 mt-4">
+                        <h4 class="text-center text-dark">📋 Movimientos Registrados</h4>
+                        <table class="table table-striped mt-3" >
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>📖 Libro</th>
+                                    <th>📜 Acto</th>
+                                    <th>🔢 N° Inscripción</th>
+                                    <th>📅 Fecha</th>
+                                    <th>📄 Folio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="movimientos-list">
+                                {% for movimiento in movimientos %}
+                                <tr>
+                                    <td>{{ movimiento.libro }}</td>
+                                    <td>{{ movimiento.acto }}</td>
+                                    <td>{{ movimiento.numero_Inscripcion }}</td>
+                                    <td>{{ movimiento.fecha_inscripcion }}</td>
+                                    <td>{{ movimiento.folio_inicial }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr id="no-movimientos-message">
+                                    <td colspan="5" class="text-center text-muted">❌ No hay movimientos registrados</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+<br />
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('propiedadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = this;
+
+        fetch(form.action, {
+            method: form.method,
+            body: new FormData(form),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(async response => {
+            let responseData;
+            try {
+                responseData = await response.json();
+            } catch (error) {
+                console.error("Error al analizar la respuesta JSON:", error);
+                responseData = null;
+            }
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'La propiedad ha sido registrada correctamente.',
+                    confirmButtonText: 'Aceptar',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    },
+                    timer: 3000, // Se cierra automáticamente después de 3 segundos
+                    timerProgressBar: true
+
+                }).then(() => {
+                    form.reset();
+                });
+            } else {
+                let errorMessage = responseData?.message || `Error ${response.status}: ${response.statusText}`;
+                if (responseData && typeof responseData === 'object') {
+                    let errores = Object.values(responseData).flat().join("\n");
+                    errorMessage = errores || errorMessage;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage,
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor: ' + error.message,
+            });
+            console.error("Error de conexión:", error);
+        });
+    });
+</script>
+<script>
+document.getElementById("movimientoForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    let form = this;
+    let propiedadSeleccionada = document.getElementById("propiedades").value;
+
+    // Validación para asegurarse de que el usuario haya seleccionado una propiedad
+    if (!propiedadSeleccionada) {
+        Swal.fire({
+            icon: "warning",
+            title: "¡Atención!",
+            text: "Debe seleccionar una propiedad antes de registrar el movimiento.",
+            confirmButtonText: "Aceptar",
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            },
+            timer: 3000, // Se cierra automáticamente después de 3 segundos
+            timerProgressBar: true
+
+            
+        });
+        return; // Evita que el formulario se envíe si no se selecciona propiedad
+    }
+
+    // Asignar el valor de la propiedad seleccionada al campo oculto en el formulario de movimiento
+    document.getElementById("propiedad_id").value = propiedadSeleccionada;
+
+    let formData = new FormData(form);
+
+    // Mostrar los datos en la consola antes de enviarlos
+    for (let [key, value] of formData.entries()) {
+        console.log(key + ": " + value);
+    }
+
+    // Enviar el formulario de movimiento con la propiedad seleccionada al backend
+    fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: "success",
+                title: "¡Éxito!",
+                text: data.message,
+                confirmButtonText: "Aceptar"
+            });
+
+            // Agregar movimiento a la tabla dinámicamente
+            let movimientosList = document.getElementById("movimientos-list");
+            let newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>${formData.get("libro")}</td>
+                <td>${formData.get("acto")}</td>
+                <td>${formData.get("numero_Inscripcion")}</td>
+                <td>${formData.get("fecha_inscripcion")}</td>
+                <td>${formData.get("folio_inicial")}</td>
+            `;
+            movimientosList.appendChild(newRow);
+            let noMovimientosMessage = document.getElementById("no-movimientos-message");
+            if (noMovimientosMessage) {
+                noMovimientosMessage.style.display = 'none';  // Ocultar mensaje si hay movimientos
+            }
+            form.reset();
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data.message || "Error desconocido",  // Si no hay mensaje, mostrar algo genérico
+                confirmButtonText: "Aceptar"
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Error de conexión",
+            text: "No se pudo conectar con el servidor. Detalle del error: " + (error.message || "Desconocido"),
+            confirmButtonText: "Aceptar"
+        });
+    });
+});
+</script>
+
+<script>
+        document.getElementById("propiedades").addEventListener("change", function() {
+            let propiedadId = this.value;
+            let movimientosList = document.getElementById("movimientos-list");
+            let pdfIconContainer = document.getElementById("pdfIconContainer");
+    
+            // Limpiar tabla antes de agregar nuevos movimientos
+            movimientosList.innerHTML = '';
+            pdfIconContainer.innerHTML = '';
+    
+            // Si no se seleccionó ninguna propiedad, mostrar el mensaje
+            if (!propiedadId) {
+                let noMovimientosMessage = document.createElement('tr');
+                noMovimientosMessage.innerHTML = `
+                    <td colspan="5" class="text-center text-muted">❌ No hay movimientos registrados</td>
+                `;
+                movimientosList.appendChild(noMovimientosMessage);
+                return;
+            }
+    
+            // Hacer la petición AJAX para cargar los movimientos
+            fetch(`/cargar_movimientos_por_propiedad/${propiedadId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Si hay movimientos
+                    if (data.movimientos.length > 0) {
+                        data.movimientos.forEach(movimiento => {
+                            let row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${movimiento.libro}</td>
+                                <td>${movimiento.acto}</td>
+                                <td>${movimiento.numero_Inscripcion}</td>
+                                <td>${movimiento.fecha_inscripcion}</td>
+                                <td>${movimiento.folio_inicial}</td>
+                            `;
+                            movimientosList.appendChild(row);
+                        });
+                    } //else {
+                        // Si no hay movimientos
+                      //  let noMovimientosMessage = document.createElement('tr');
+                      //  noMovimientosMessage.innerHTML = `
+                      //      <td colspan="5" class="text-center text-muted">❌ No hay movimientos registrados</td>
+                      //  `;
+                      //  movimientosList.appendChild(noMovimientosMessage);
+                    //}
+                     // Si existe un archivo PDF, agregar el ícono
+                     if (data.archivo_pdf_url) {
+                        pdfIconContainer.innerHTML = `
+                            <a href="${data.archivo_pdf_url}" target="_blank" class="btn btn-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-earmark-pdf" viewBox="0 0 16 16">
+                                    <path d="M5.5 0A1.5 1.5 0 0 0 4 1.5V14a1.5 1.5 0 0 0 1.5 1.5h5A1.5 1.5 0 0 0 12 14V1.5A1.5 1.5 0 0 0 10.5 0H5.5zM6 1h4v12H6V1z"/>
+                                </svg>
+                                📄 Ver PDF
+                            </a>
+                        `;
+                    }
+                       
+                });
+        });
+</script>   
+
+
+<script>
+    document.getElementById("propiedadForm").addEventListener("submit", function(event) {
+        console.log("Formulario enviado");
+        console.log("Nombre:", document.querySelector("input[name='nombres']").value);
+        console.log("Apellido:", document.querySelector("input[name='apellidos']").value);
+    });
+</script>
+<script>
+    function actualizarEstado() {
+        var propiedadId = document.getElementById('propiedades').value;
+        var estado = document.getElementById('valestado').value;
+    
+        // Verificar si se seleccionó una propiedad
+        if (!propiedadId) {
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ No seleccionaste ninguna propiedad',
+                text: 'Por favor selecciona una propiedad antes de proceder.',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                },
+                timer: 3000, // Se cierra automáticamente después de 3 segundos
+                timerProgressBar: true
+
+            });
+            return;
+        }
+    
+        // Verificar si se seleccionó un estado
+        if (!estado) {
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ No seleccionaste ningún estado',
+                text: 'Por favor selecciona un estado antes de proceder.',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                },
+                timer: 3000, // Se cierra automáticamente después de 3 segundos
+                timerProgressBar: true
+
+            });
+            return;
+        }
+    
+        // Enviar los datos mediante AJAX
+        var csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        var formData = new FormData();
+        formData.append('propiedad_id', propiedadId);
+        formData.append('valestado', estado);
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    
+        fetch("{% url 'actualizar_estado' %}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '✅ Estado actualizado correctamente',
+                    text: 'El estado de la propiedad ha sido actualizado con éxito.',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    },
+                    timer: 3000, // Se cierra automáticamente después de 3 segundos
+                    timerProgressBar: true
+
+                });
+                
+                // Después de actualizar el estado, deshabilitar o habilitar el formulario según el estado
+                toggleFormulario(estado);  // Llamada a la función para actualizar el formulario según el estado
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ Error al actualizar el estado',
+                    text: data.message || 'Hubo un problema al intentar actualizar el estado.',
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error inesperado',
+                text: 'Hubo un error inesperado. Intenta nuevamente.',
+            });
+        });
+    }
+
+    // Función para deshabilitar o habilitar el formulario de movimientos
+    function toggleFormulario(estado) {
+        var movimientoForm = document.getElementById('movimientoForm');  // Formulario de movimientos
+        var inputs = movimientoForm.querySelectorAll('input, button, select');  // Todos los inputs, select y botones dentro del formulario
+
+        // Si el estado es "cancelado", deshabilitar todos los campos excepto el select de estado
+        if (estado === 'cancelado') {
+            inputs.forEach(function(input) {
+                // Deshabilitar todos los elementos excepto el select con id 'valestado'
+                if (input.id !== 'valestado') {
+                    input.disabled = true;
+                }
+            });
+
+            // Mostrar un mensaje de alerta indicando que el formulario está deshabilitado
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Estado Cancelado',
+                text: 'El formulario se ha deshabilitado debido al estado de la propiedad.',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                },
+                timer: 3000, // Se cierra automáticamente después de 3 segundos
+                timerProgressBar: true
+
+            });
+        } else {
+            // Si el estado no es "cancelado", habilitar todos los campos del formulario
+            inputs.forEach(function(input) {
+                input.disabled = false;
+            });
+        }
+    }
+
+    // Detectar cambio en el estado del select
+    document.getElementById('valestado').addEventListener('change', function() {
+        var estado = this.value;  // Obtener el nuevo estado
+
+        // Llamar a la función para actualizar el formulario según el estado seleccionado
+        toggleFormulario(estado);
+    });
+</script>
+<script>
+document.getElementById('propiedades').addEventListener('change', function() {
+    var propiedadId = this.value;  // Obtener el id de la propiedad seleccionada
+
+    // Verificar si se seleccionó una propiedad
+    if (!propiedadId) {
+        Swal.fire({
+            icon: 'warning',
+            title: '⚠️ No seleccionaste ninguna propiedad',
+            text: 'Por favor selecciona una propiedad.',
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            },
+            timer: 3000, // Se cierra automáticamente después de 3 segundos
+            timerProgressBar: true
+        });
+
+        // Asegurar que el campo de estado vuelva a la opción "Seleccionar Estado"
+        document.getElementById('valestado').value = ""; // Restablecer a "Seleccionar Estado"
+        return;
+    }
+
+    // Realizar una solicitud AJAX para obtener el estado de la propiedad seleccionada
+    var csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+    var formData = new FormData();
+    formData.append('propiedad_id', propiedadId);
+    formData.append('csrfmiddlewaretoken', csrfToken);
+
+    fetch("{% url 'obtener_estado_propiedad' %}", {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Si el estado de la propiedad existe, seleccionarlo en el combo de estado
+            var estado = data.estado || '';  // Si no hay estado, se deja vacío
+            document.getElementById('valestado').value = estado;  // Cambiar el valor del select de estado
+
+            // Deshabilitar o habilitar el formulario de movimientos si el estado es "cancelado"
+            toggleFormulario(estado);  // Llamar a la función para deshabilitar o habilitar el formulario
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error al obtener el estado',
+                text: data.message || 'Hubo un problema al obtener el estado de la propiedad.',
+            });
+
+            // Si no se obtiene el estado, restablecer el campo a "Seleccionar Estado"
+            document.getElementById('valestado').value = "";  // Restablecer a "Seleccionar Estado"
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: '❌ Error inesperado',
+            text: 'Hubo un error inesperado. Intenta nuevamente.',
+        });
+
+        // Si ocurre un error, restablecer el campo a "Seleccionar Estado"
+        document.getElementById('valestado').value = "";  // Restablecer a "Seleccionar Estado"
+    });
+});
+
+// Función para deshabilitar o habilitar el formulario de movimientos
+function toggleFormulario(estado) {
+    var movimientoForm = document.getElementById('movimientoForm');  // Formulario de movimientos
+    var inputs = movimientoForm.querySelectorAll('input, button, select');  // Todos los inputs, select y botones dentro del formulario
+
+    // Si el estado es "cancelado", deshabilitar todos los campos excepto el select de estado
+    if (estado === 'cancelado') {
+        inputs.forEach(function(input) {
+            // Deshabilitar todos los elementos excepto el select con id 'valestado'
+            if (input.id !== 'valestado') {
+                input.disabled = true;
+            }
+        });
+
+        // Mostrar un mensaje de alerta indicando que el estado está cancelado
+        Swal.fire({
+            icon: 'warning',
+            title: '⚠️ Estado Cancelado',
+            text: 'El formulario se ha deshabilitado debido al estado de la propiedad.',
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            },
+            timer: 3000, // Se cierra automáticamente después de 3 segundos
+            timerProgressBar: true
+        });
+    } else {
+        // Si el estado no es "cancelado", habilitar todos los campos del formulario
+        inputs.forEach(function(input) {
+            input.disabled = false;
+        });
+    }
+}
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="container mt-5">
+    <!-- Título alineado a la izquierda -->
+    <div class="row">
+        <div class="col-md-12 d-flex align-items-center p-4 mb-4 rounded-3" style="background-color: #f7f7f7; box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);">
+            <!-- Avatar circular con Font Awesome -->
+            <i class="fas fa-user-circle fa-4x text-primary rounded-circle border border-3 p-2"></i>
+            
+            <div class="ms-4">
+                <h1 class="fw-bold" style="color: #333;">Bienvenido al Sistema de Registro de Propiedades</h1>
+                <p class="lead text-muted">
+                    Usa las opciones del menú para navegar: registra propiedades, consulta las propiedades disponibles o gestiona usuarios.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_superuser %}
+    <!-- Centrar la tarjeta si solo hay una -->
+    <div class="d-flex justify-content-center mt-4">
+        <div class="col-md-4">
+            <div class="card custom-card text-center shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title text-primary fw-bold">Consulta de Solicitantes</h5>
+                    <p class="card-text">Muestra las Solicitudes Para el registro de Propiedades</p>
+                    <a href="{% url 'listar_solicitantes' %}" class="btn btn-primary btn-lg">Ir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    
+    <!-- Tarjetas centradas con flexbox -->
+    <div class="d-flex justify-content-center flex-wrap mt-4 gap-4">
+        <div class="col-md-4">
+            <div class="card custom-card text-center shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title text-success fw-bold">Registro Solicitante</h5>
+                    <p class="card-text">Opción que nos permite registrar los Datos del Solicitante.</p>
+                    <a href="{% url 'registrar_solicitante' %}" class="btn btn-success btn-lg">Ir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card custom-card text-center shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title text-danger fw-bold">Consultar Propiedades</h5>
+                    <p class="card-text">Listado de las Propiedades del Solicitante.</p>
+                    <a href="{% url 'listar_propiedades' %}" class="btn btn-danger btn-lg">Ir</a>
+                </div>
+            </div>
+        </div>  
+    </div>
+    {% endif %}
+</main>
+
+<!-- Estilos personalizados para mejorar el diseño -->
+<style>
+    .custom-card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .custom-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-body h5 {
+        font-size: 1.4rem;
+    }
+
+    .btn-lg {
+        border-radius: 30px;
+        padding: 10px 20px;
+        font-weight: bold;
+    }
+
+    /* Estilo de la sección de bienvenida */
+    .p-4 {
+        background-color: #f0f8ff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    /* Agregar un efecto visual suave al icono */
+    .fa-user-circle {
+        transition: transform 0.3s ease;
+    }
+
+    .fa-user-circle:hover {
+        transform: scale(1.2);
+    }
+</style>
+
+{% endblock %}

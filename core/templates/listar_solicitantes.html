@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Estilo para el botón "Registrar" */
+    .btn-edit {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff; /* Azul Bootstrap */
+        border: none;
+        border-radius: 30px;
+        padding: 10px 25px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-edit:hover {
+        background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-edit:active {
+        transform: scale(1.02);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos para el DataTable */
+    table.dataTable {
+        width: 100% !important;
+        border-collapse: collapse;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table.dataTable thead {
+        background-color: #007bff; /* Azul Bootstrap */
+        color: white;
+    }
+
+    table.dataTable thead th {
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding: 12px 15px;
+    }
+
+    table.dataTable tbody td {
+        padding: 12px 15px;
+        font-size: 1rem;
+    }
+
+    table.dataTable tbody tr:nth-child(even) {
+        background-color: #f4f4f4;
+    }
+
+    table.dataTable tbody tr:hover {
+        background-color: #e1e1e1;
+    }
+
+    /* Estilo del título */
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 30px;
+    }
+
+    /* Estilo para la tarjeta */
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Listado de Solicitantes</h1>
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <table id="propiedadesTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Cédula</th>
+                        <th>Tipo Solicitud</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitante in solicitantes %}
+                    <tr>
+                        <td>{{ solicitante.id }}</td>
+                        <td>{{ solicitante.nombre }}</td>
+                        <td>{{ solicitante.apellido }}</td>
+                        <td>{{ solicitante.cedula }}</td>
+                        <td>{{ solicitante.tipo_solicitud }}</td>
+                        <td>
+                            <a href="{% url 'registrar_propiedad' %}?nombre={{ solicitante.nombre|urlencode }}&apellido={{ solicitante.apellido|urlencode }}" class="btn-edit">Registrar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Inicializar DataTable
+    $(document).ready(function() {
+        $('#propiedadesTable').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "responsive": true
+        });
+    });
+</script>
+{% endblock %}

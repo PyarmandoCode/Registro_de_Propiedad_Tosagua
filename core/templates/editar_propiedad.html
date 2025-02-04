@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Editar Propiedad</h1>
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <form method="post" action="{% url 'editar_propiedad' propiedad.id %}">
+                {% csrf_token %}
+                <div class="row">
+                    <!-- Columna 1 -->
+                    <div class="col-md-6">
+
+                        <div class="mb-4">
+                            <label for="numeroregistro" class="form-label fs-5 fw-bold text-primary">Numero Registro</label>
+                            <input type="text" class="form-control form-control-lg" id="numeroregistro" name="numeroregistro" value="{{ propiedad.numero_registro }}" required>
+                        </div>
+
+
+
+
+                        <div class="mb-4">
+                            <label for="titulo" class="form-label fs-5 fw-bold text-primary">Título de la Propiedad</label>
+                            <input type="text" class="form-control form-control-lg" id="titulo" name="titulo" value="{{ propiedad.titulo }}" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="descripcion" class="form-label fs-5 fw-bold text-primary">Descripción</label>
+                            <textarea class="form-control form-control-lg" id="descripcion" name="descripcion" rows="4" required>{{ propiedad.descripcion }}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="ubicacion" class="form-label fs-5 fw-bold text-primary">Ubicación</label>
+                            <input type="text" class="form-control form-control-lg" id="ubicacion" name="ubicacion" value="{{ propiedad.ubicacion }}" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="area" class="form-label fs-5 fw-bold text-primary">Área</label>
+                            <input type="text" class="form-control form-control-lg" id="area" name="area" value="{{ propiedad.area }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Columna 2 -->
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label for="precio" class="form-label fs-5 fw-bold text-primary">Precio</label>
+                            <input type="number" class="form-control form-control-lg" id="precio" name="precio" value="{{ propiedad.precio }}" step="0.01" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="disponible" class="form-label fs-5 fw-bold text-primary">¿Disponible?</label>
+                            <select class="form-select form-select-lg" id="disponible" name="disponible" required>
+                                <option value="True" {% if propiedad.disponible %} selected {% endif %}>Sí</option>
+                                <option value="False" {% if not propiedad.disponible %} selected {% endif %}>No</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="fecha" class="form-label fs-5 fw-bold text-primary">Fecha de Registro</label>
+                            <input type="text" class="form-control form-control-lg" id="fecha" name="fecha" value="{{ propiedad.fecha_registro }}" disabled>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Actualizar Propiedad</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br/>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Añadir alguna validación o personalización de JS si se necesita
+</script>
+{% endblock %}

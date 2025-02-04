@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Estilo para el botón "Registrar" */
+    .btn-edit {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff; /* Azul Bootstrap */
+        border: none;
+        border-radius: 30px;
+        padding: 10px 25px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-edit:hover {
+        background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-edit:active {
+        transform: scale(1.02);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos para el DataTable */
+    table.dataTable {
+        width: 100% !important;
+        border-collapse: collapse;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table.dataTable thead {
+        background-color: #007bff; /* Azul Bootstrap */
+        color: white;
+    }
+
+    table.dataTable thead th {
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding: 12px 15px;
+    }
+
+    table.dataTable tbody td {
+        padding: 12px 15px;
+        font-size: 1rem;
+    }
+
+    table.dataTable tbody tr:nth-child(even) {
+        background-color: #f4f4f4;
+    }
+
+    table.dataTable tbody tr:hover {
+        background-color: #e1e1e1;
+    }
+
+    /* Estilo del título */
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 30px;
+    }
+
+    /* Estilo para la tarjeta */
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+</style>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Listado de Propiedades</h1>
+    <div class="card shadow">
+        <div class="card-body">
+            <table id="propiedadesTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Numero Registro</th>
+                        <th>Inmueble</th>
+                        <th>Ubicación</th>
+                        <th>Área</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>  <!-- Cambié el encabezado para mejor comprensión -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for propiedad in propiedades %}
+                    <tr>
+                        <td>{{ propiedad.id }}</td>
+                        <td>{{ propiedad.codigo_interno }}</td>
+                        <td>{{ propiedad.bien_inmueble }}</td>
+                        <td>{{ propiedad.ubicacion }}</td>
+                        <td>{{ propiedad.area }}</td>
+                        <td>
+                            {% if propiedad.estado == 'cancelado' %}
+                                <button class="btn btn-danger">❌ Cancelado</button>
+                            {% elif propiedad.estado == 'atendiendo' %}
+                                <button class="btn btn-success" onclick="document.getElementById('fileInput{{ propiedad.id }}').click();">✅ Atendiendo</button>
+                            {% elif propiedad.estado == 'atendido' %}
+                                <button class="btn btn-primary">✔ Atendido</button>
+                            {% else %}
+                                <button class="btn btn-secondary">❕ No Atendido</button>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if propiedad.estado == 'atendiendo' %}
+                                <input type="file" id="fileInput{{ propiedad.id }}" style="display:none" onchange="uploadFile({{ propiedad.id }})">
+                            {% endif %}
+                            
+                            <!-- Icono de PDF si la propiedad ya tiene un archivo subido -->
+                            {% if propiedad.archivo_pdf %}
+                                <a href="{{ propiedad.archivo_pdf.url }}" target="_blank" class="btn btn-danger">
+                                    📄 Comprobante
+                                </a>
+                            {% else %}
+                                <span id="pdfIcon{{ propiedad.id }}"></span>  <!-- Icono dinámico para agregar con JS -->
+                                <!-- Indicador de progreso -->
+                                <div id="progressContainer{{ propiedad.id }}" style="display:none;">
+                                    <div class="progress">
+                                        <div id="progressBar{{ propiedad.id }}" class="progress-bar" style="width: 0%;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            
+            
+        </div>
+    </div>
+</div>
+<br/>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Inicializar DataTable
+    $(document).ready(function() {
+        $('#propiedadesTable').DataTable();
+    });
+    // Función para confirmar eliminación
+</script>
+
+<script>
+    function uploadFile(propiedadId) {
+        var fileInput = document.getElementById('fileInput' + propiedadId);
+        var file = fileInput.files[0];
+      
+        if (!file) {
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ No seleccionaste ningún archivo',
+                text: 'Por favor, selecciona un archivo PDF antes de continuar.',
+            });
+            return;
+        }
+      
+        var formData = new FormData();
+        formData.append('pdf_file', file);
+    
+        // Obtener CSRF token
+        var csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        formData.append('csrfmiddlewaretoken', csrfToken);
+      
+        // Mostrar el indicador de progreso
+        var progressContainer = document.getElementById('progressContainer' + propiedadId);
+        var progressBar = document.getElementById('progressBar' + propiedadId);
+        progressContainer.style.display = 'block';
+      
+        // Construir la URL con el ID de la propiedad
+        var url = `/subir_pdf/${propiedadId}/`;
+    
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrfToken,
+            },
+            // Agregar la función para monitorear el progreso
+            onUploadProgress: function(progressEvent) {
+                if (progressEvent.lengthComputable) {
+                    var percent = (progressEvent.loaded / progressEvent.total) * 100;
+                    progressBar.style.width = percent + '%';
+                    progressBar.setAttribute('aria-valuenow', percent);
+                }
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '✅ PDF subido correctamente',
+                    text: 'El archivo se ha guardado con éxito.',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    },
+                    timer: 3000, // Se cierra automáticamente después de 3 segundos
+                    timerProgressBar: true
+                });
+    
+                // Agregar el icono de PDF dinámicamente sin recargar la página
+                let pdfIconContainer = document.getElementById('pdfIcon' + propiedadId);
+                if (pdfIconContainer) {
+                    pdfIconContainer.innerHTML = `<a href="${data.pdf_url}" target="_blank" class="btn btn-danger">📄 Comprobante</a>`;
+                }
+    
+                // Ocultar el indicador de progreso
+                progressContainer.style.display = 'none';
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ Error al subir el PDF',
+                    text: data.error || 'Ocurrió un problema desconocido.',
+                });
+                progressContainer.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '🚨 Error interno',
+                text: 'Hubo un problema al intentar subir el archivo.',
+            });
+            progressContainer.style.display = 'none';
+        });
+    }    
+</script>
+
+
+{% endblock %}

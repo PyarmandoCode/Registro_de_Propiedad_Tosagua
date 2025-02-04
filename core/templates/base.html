@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Registro de Propiedades</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* Aseguramos que el footer esté siempre al final */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+        main {
+            flex: 1; /* Ocupa el espacio disponible para el contenido */
+        }
+        footer {
+            background-color: #0d6efd; /* Color de fondo del footer */
+            color: white;
+            padding: 15px;
+        }
+        .navbar {
+            z-index: 10; /* Para asegurarnos de que la barra de navegación esté encima del contenido */
+        }
+    </style>
+
+    <style>
+        /* Estilo para el enlace "Hola, User" */
+        .custom-username {
+            font-size: 1.2rem; /* Tamaño de fuente más grande */
+            font-weight: bold; /* Negrita para resaltar */
+            color: #fff; /* Color blanco para que destaque sobre el fondo azul */
+            border-radius: 30px; /* Bordes redondeados */
+            padding: 8px 15px; /* Espaciado dentro del enlace */
+            transition: all 0.3s ease; /* Efecto suave al pasar el ratón */
+            background-color: rgba(0, 123, 255, 0.3); /* Fondo azul claro y semitransparente */
+        }
+    
+        /* Cambio de color y efecto al pasar el ratón */
+        .custom-username:hover {
+            color: #ffffff; /* El texto sigue blanco */
+            background-color: #007bff; /* Fondo azul fuerte al pasar el ratón */
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Sombra suave */
+            transform: scale(1.05); /* Efecto de agrandamiento */
+        }
+    
+        /* Icono de usuario dentro del enlace */
+        .fa-user-circle {
+            font-size: 1.5rem; /* Tamaño mayor para el icono */
+            color: #ffffff; /* Color del icono */
+            transition: transform 0.3s ease; /* Efecto suave al pasar el ratón */
+        }
+    
+        .fa-user-circle:hover {
+            transform: scale(1.2); /* Efecto de agrandamiento al pasar el ratón */
+        }
+    
+        /* Ajustar el fondo del menú de navegación */
+        .navbar {
+            background-color: #007bff; /* Azul intenso para el fondo del menú */
+        }
+    
+        .navbar .nav-link {
+            color: white !important; /* Color blanco en los enlaces del menú */
+        }
+
+        .btn-logout {
+            font-size: 1rem; /* Tamaño de fuente */
+            font-weight: bold; /* Negrita para mayor énfasis */
+            color: #fff; /* Color blanco */
+            background-color: #e74c3c; /* Fondo rojo atractivo */
+            border: none; /* Quitar borde predeterminado */
+            border-radius: 30px; /* Bordes redondeados */
+            padding: 10px 20px; /* Espaciado interno para hacerlo más grande */
+            cursor: pointer; /* Apunta a que es interactivo */
+            transition: all 0.3s ease; /* Transición suave al pasar el ratón */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave para darle efecto de profundidad */
+        }
+    
+        /* Efecto al pasar el ratón */
+        .btn-logout:hover {
+            background-color: #c0392b; /* Fondo más oscuro al pasar el ratón */
+            transform: scale(1.1); /* Aumenta el tamaño ligeramente */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Sombra más prominente */
+        }
+    
+        /* Efecto al hacer clic en el botón */
+        .btn-logout:active {
+            transform: scale(1.05); /* Reduce el tamaño ligeramente al hacer clic */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra más suave */
+        }
+
+        .navbar {
+            border-radius: 5px;
+        }
+    
+        .navbar-dark .navbar-nav .nav-link {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: white !important;
+            transition: color 0.3s ease;
+        }
+    
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #ffcc00 !important;
+        }
+    
+        .btn-logout {
+            background-color: #dc3545;
+            border: none;
+            padding: 5px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+    
+        .navbar-toggler-icon {
+            background-color: white;
+        }
+    
+        .navbar-brand {
+            color: white !important;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+    
+        .navbar-toggler {
+            border-color: white;
+        }
+
+        footer {
+            border-top: 2px solid #ffc107; /* Línea dorada en la parte superior */
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+    
+        footer .container {
+            max-width: 1200px;
+        }
+    
+        footer p {
+            margin-bottom: 10px;
+        }
+    
+        footer .fs-5 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+    
+        footer .fs-6 {
+            font-size: 1rem;
+        }
+    
+    </style>
+    
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand fs-3 fw-bold" href="{% url 'index' %}">Web Propiedades 2.0</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white fs-5 fw-semibold" href="{% url 'index' %}">
+                                <i class="fas fa-user-circle me-2"></i> Hola, {{ user.username }}
+                            </a>
+                        </li>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm mt-2">Cerrar sesión</button>
+                        </form>
+
+                    {% endif %}
+                      
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Contenido principal -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 mt-5 bg-primary text-white">
+        <div class="container">
+            <p class="mb-0 fs-5">© 2025 Registro de Propiedades. Todos los derechos reservados.</p>
+           
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>
