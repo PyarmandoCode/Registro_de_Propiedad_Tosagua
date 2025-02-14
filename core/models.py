@@ -22,6 +22,9 @@ class Propiedades(models.Model):
     solicitante = models.ForeignKey(Solicitante, on_delete=models.CASCADE)
     estado=models.CharField(max_length=69,blank=True,null=True)
     archivo_pdf = models.FileField(upload_to='pdfs/', blank=True, null=True)
+    documento_pdf = models.FileField(upload_to='documento/', blank=True, null=True)
+    
+
 
     def __str__(self):
         return self.bien_inmueble

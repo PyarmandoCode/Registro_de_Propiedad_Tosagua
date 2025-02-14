@@ -9,6 +9,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
 
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+from django.core.files.base import ContentFile
+import io
+import datetime
 
 def index(request):
     template_name="dashboard.html"
@@ -131,9 +137,14 @@ def register_view(request):
         if form.is_valid():
             form.save()
             return redirect('login')  # Redirigir al login después de registrar
+        else:
+            # Extraer errores y pasarlos al template
+            errores = form.errors.get_json_data()
     else:
         form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+        errores = None
+
+    return render(request, 'register.html', {'form': form, 'errores': errores})
 
 
 @login_required
@@ -260,26 +271,63 @@ def actualizar_estado(request):
         propiedad_id = request.POST.get('propiedad_id')
         estado = request.POST.get('valestado')
 
-        # Verificar si la propiedad y el estado fueron seleccionados
         if not propiedad_id or not estado:
-            return JsonResponse({
-                'success': False,
-                'message': 'Faltan datos requeridos: propiedad o estado.'
-            }, status=400)
+            return JsonResponse({'success': False, 'message': 'Faltan datos requeridos: propiedad o estado.'}, status=400)
 
-        # Obtener la propiedad seleccionada
         propiedad = get_object_or_404(Propiedades, id=propiedad_id)
-
-        # Actualizar el estado de la propiedad
         propiedad.estado = estado
+
+        # Si el estado es "atendido", generar el PDF con diseño tipo recibo
+        if estado == "atendido":
+            buffer = io.BytesIO()
+            pdf = canvas.Canvas(buffer, pagesize=letter)
+
+            # Cargar imagen de marca de agua
+            watermark_url = "https://res.cloudinary.com/dream-music/image/upload/v1739489089/logo_sjexi3.jpg"
+            watermark = ImageReader(watermark_url)
+
+            # Dibujar la marca de agua en el fondo
+            pdf.drawImage(watermark, 150, 200, width=300, height=300, mask='auto')
+
+            # Encabezado del recibo
+            pdf.setFont("Helvetica-Bold", 16)
+            pdf.drawString(200, 750, "RECIBO DE ATENCIÓN")
+
+            pdf.setFont("Helvetica", 10)
+            pdf.drawString(400, 750, f"Fecha: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}")
+
+            # Línea separadora
+            pdf.line(50, 740, 550, 740)
+
+            # Información de la propiedad
+            pdf.setFont("Helvetica-Bold", 12)
+            pdf.drawString(50, 710, "Información de la Propiedad:")
+
+            pdf.setFont("Helvetica", 10)
+            pdf.drawString(50, 690, f"📌 Código Interno: {propiedad.codigo_interno or 'N/A'}")
+            pdf.drawString(50, 670, f"🏠 Bien Inmueble: {propiedad.bien_inmueble}")
+            pdf.drawString(50, 650, f"📍 Ubicación: {propiedad.ubicacion or 'N/A'}")
+            pdf.drawString(50, 630, f"📏 Área: {propiedad.area or 'N/A'}")
+            pdf.drawString(50, 610, f"🙍‍♂️ Solicitante: {propiedad.solicitante}")
+
+            # Estado
+            pdf.setFont("Helvetica-Bold", 12)
+            pdf.drawString(50, 580, "✅ Estado de Atención: ATENDIDO")
+
+            # Línea final
+            pdf.line(50, 560, 550, 560)
+
+            pdf.showPage()
+            pdf.save()
+
+            buffer.seek(0)
+            propiedad.documento_pdf.save(f"recibo_atencion_{propiedad_id}.pdf", ContentFile(buffer.read()), save=False)
+
         propiedad.save()
 
-        return JsonResponse({
-            'success': True,
-            'message': 'Estado de la propiedad actualizado correctamente.'
-        })
+        return JsonResponse({'success': True, 'message': 'Estado actualizado correctamente y PDF generado.'})
 
-    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
 def obtener_estado_propiedad(request):
     if request.method == "POST":

@@ -96,6 +96,7 @@
                         <th>Área</th>
                         <th>Estado</th>
                         <th>Acciones</th>  <!-- Cambié el encabezado para mejor comprensión -->
+                        <th>Documento PDF</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -135,6 +136,15 @@
                                         <div id="progressBar{{ propiedad.id }}" class="progress-bar" style="width: 0%;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if propiedad.documento_pdf %}
+                                <a href="{{ propiedad.documento_pdf.url }}" target="_blank" class="btn btn-danger">
+                                    📄 Ver PDF
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Sin documento</span>
                             {% endif %}
                         </td>
                     </tr>
